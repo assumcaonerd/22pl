@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rádio 22PL | Informação ao vivo</title>
+  <meta name="description" content="Rádio virtual de notícias, 24 horas por dia.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header><a class="brand" href="/"><b>22</b><span>PL</span><em>RÁDIO</em></a><nav><a href="#programacao">Programação</a><a href="#historico">Ouvir novamente</a><a href="/admin.html">Painel editorial</a></nav></header>
+  <main>
+    <section class="hero">
+      <div class="live-line"><span><i></i> AO VIVO</span><time data-clock>00:00:00</time><small data-city>Vitória, Espírito Santo</small></div>
+      <div class="studio">
+        <div class="signal"><div class="waves"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><strong>22</strong><span>PL</span><small>RÁDIO</small></div>
+        <div class="on-air">
+          <p class="eyebrow" data-label>AGORA NO AR</p><span class="category" data-category>Rádio 22PL</span>
+          <h1 data-title>Carregando a programação...</h1><p data-summary>Informação em movimento, 24 horas por dia.</p>
+          <div class="presenters"><span>Com</span><b data-presenter>Marcos e Clara</b><div class="avatar">M</div><div class="avatar light">C</div></div>
+          <div class="controls"><button class="play" data-play><span data-icon>▶</span><b data-play-text>Ouvir ao vivo</b></button><button data-next>Próxima</button><label>Volume <input data-volume type="range" min="0" max="1" step=".05" value=".9"></label></div>
+          <div class="progress"><i data-progress></i></div><small class="status" data-status>Toque em “Ouvir ao vivo” para iniciar.</small>
+        </div>
+      </div>
+    </section>
+    <section class="content" id="programacao">
+      <div class="feed"><div class="section-title"><div><small>PROGRAMAÇÃO AUTOMÁTICA</small><h2>Próximas notícias</h2></div><span>Atualização a cada 15 minutos</span></div><div data-queue></div></div>
+      <aside><div class="card breaking"><small>PLANTÃO 22PL</small><h2>Urgência entra primeiro</h2><p>Uma notícia marcada como plantão interrompe a sequência e assume o primeiro lugar da programação.</p></div><div class="card"><small>COBERTURA</small><h2>Notícia o dia inteiro</h2><ul><li>Espírito Santo</li><li>Política nacional</li><li>Segurança pública</li><li>Trânsito e tempo</li><li>Esportes e economia</li></ul></div></aside>
+    </section>
+    <section class="history" id="historico"><div class="section-title"><div><small>ARQUIVO DA RÁDIO</small><h2>Ouvir novamente</h2></div></div><div class="history-grid" data-history></div></section>
+  </main>
+  <footer><b>Rádio 22PL</b><span>Informação em movimento</span><a href="/admin.html">Painel editorial</a></footer>
+  <script src="app.js"></script>
+</body></html>
