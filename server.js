@@ -2,12 +2,16 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const { createCollector } = require('./services/news-collector');
 
 const PORT = Number(process.env.PORT || 3000);
 const ROOT = __dirname;
 const PUBLIC = path.join(ROOT, 'public');
 const NEWS_FILE = path.join(ROOT, 'data', 'news.json');
 const STATION_FILE = path.join(ROOT, 'config', 'station.json');
+const SOURCES_FILE = path.join(ROOT, 'config', 'sources.json');
+const station = readJson(STATION_FILE);
+const collector = createCollector({ sourcesFile: SOURCES_FILE, newsFile: NEWS_FILE, intervalMinutes: station.newsRefreshMinutes || 3 });
 
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg' };
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -42,6 +46,9 @@ function safeNews(input) {
 async function api(req, res, url) {
   if (req.method === 'GET' && url.pathname === '/api/health') return sendJson(res, 200, { ok: true, service: '22pl-radio', time: new Date().toISOString() });
   if (req.method === 'GET' && url.pathname === '/api/station') return sendJson(res, 200, readJson(STATION_FILE));
+  if (req.method === 'GET' && url.pathname === '/api/sources') return sendJson(res, 200, readJson(SOURCES_FILE));
+  if (req.method === 'GET' && url.pathname === '/api/collector') return sendJson(res, 200, collector.status());
+  if (req.method === 'POST' && url.pathname === '/api/editorial/sync') return sendJson(res, 200, await collector.sync());
   if (req.method === 'GET' && url.pathname === '/api/news') return sendJson(res, 200, sortedNews());
   if (req.method === 'GET' && url.pathname === '/api/editorial/news') return sendJson(res, 200, readJson(NEWS_FILE));
   if (req.method === 'POST' && url.pathname === '/api/editorial/news') {
@@ -85,4 +92,7 @@ const server = http.createServer(async (req, res) => {
   return staticFile(req, res, url);
 });
 
-server.listen(PORT, () => console.log(`Rádio 22PL disponível em http://localhost:${PORT}`));
+server.listen(PORT, () => {
+  console.log(`Rádio 22PL disponível em http://localhost:${PORT}`);
+  collector.sync().then(result => console.log(`Coletor atualizado: ${result.imported} notícia(s) nova(s).`)).catch(error => console.error('Falha inicial do coletor:', error.message));
+});
