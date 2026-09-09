@@ -19,6 +19,19 @@ const cleanText = value => decodeEntities(value)
   .replace(/\s+/g, ' ')
   .trim();
 
+const removeSources = value => String(value || '')
+  .replace(/(?:^|\s)(?:fontes consultadas|fontes?|referências)\b(?:\s*:)?[\s\S]*$/i, '')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+function rawTag(xml, names) {
+  for (const name of names) {
+    const match = xml.match(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${name}>`, 'i'));
+    if (match) return match[1];
+  }
+  return '';
+}
+
 function tag(xml, names) {
   for (const name of names) {
     const match = xml.match(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${name}>`, 'i'));
@@ -52,7 +65,9 @@ function parseFeed(xml, config) {
     const rawTitle = tag(block, ['title']);
     const source = sourceName(block, config.name, rawTitle);
     const title = headline(rawTitle, source);
-    const description = tag(block, ['description', 'summary', 'content:encoded', 'content']);
+    const rawContent = rawTag(block, ['content:encoded', 'content']);
+    const description = tag(block, ['description', 'summary']);
+    const feedContent = removeSources(cleanText(rawContent));
     const publishedAt = tag(block, ['pubDate', 'published', 'updated', 'dc:date']);
     const sourceUrl = link(block);
     if (!title || !sourceUrl) return null;
@@ -61,6 +76,7 @@ function parseFeed(xml, config) {
       id: `feed-${crypto.createHash('sha1').update(`${title}|${source}`).digest('hex').slice(0, 20)}`,
       title,
       summary: description && description !== rawTitle ? description.slice(0, 700) : `Confira os detalhes desta notícia publicada por ${source}.`,
+      content: feedContent.length > 80 ? feedContent : '',
       category: config.category || 'Últimas Notícias',
       source,
       sourceUrl,
@@ -75,6 +91,37 @@ function parseFeed(xml, config) {
   }).filter(Boolean);
 }
 
+function extractArticleText(html) {
+  let area = String(html || '');
+  const article = area.match(/<article(?:\s[^>]*)?>([\s\S]*?)<\/article>/i);
+  const main = area.match(/<main(?:\s[^>]*)?>([\s\S]*?)<\/main>/i);
+  area = article?.[1] || main?.[1] || area;
+  area = area
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<(?:nav|aside|footer|form|button)[\s\S]*?<\/(?:nav|aside|footer|form|button)>/gi, ' ')
+    .replace(/<h[1-6][^>]*>\s*(?:fontes?|fontes consultadas|referências)\s*<\/h[1-6]>[\s\S]*$/i, ' ');
+  const blocos = [...area.matchAll(/<(?:p|h2|h3)(?:\s[^>]*)?>([\s\S]*?)<\/(?:p|h2|h3)>/gi)]
+    .map(match => cleanText(match[1]))
+    .filter(texto => texto.length > 20)
+    .filter(texto => !/^(?:leia também|veja também|publicidade|compartilhe|siga-nos|assine|fontes?|referências)\b/i.test(texto));
+  return removeSources(blocos.join(' '));
+}
+
+async function fetchArticleText(url) {
+  try {
+    const response = await fetch(url, {
+      redirect: 'follow',
+      headers: { 'user-agent': 'Mozilla/5.0 Radio22PL/0.3', accept: 'text/html,application/xhtml+xml' },
+      signal: AbortSignal.timeout(20000)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return extractArticleText(await response.text());
+  } catch {
+    return '';
+  }
+}
+
 function createCollector({ sourcesFile, newsFile, intervalMinutes = 3 }) {
   const state = { running: false, lastRun: null, imported: 0, errors: [] };
 
@@ -86,16 +133,21 @@ function createCollector({ sourcesFile, newsFile, intervalMinutes = 3 }) {
     try {
       const sources = JSON.parse(fs.readFileSync(sourcesFile, 'utf8')).filter(source => source.enabled);
       const current = JSON.parse(fs.readFileSync(newsFile, 'utf8'));
-      const known = new Set(current.map(item => item.id));
+      const byId = new Map(current.map(item => [item.id, item]));
       for (const source of sources) {
         try {
           const response = await fetch(source.url, { headers: { 'user-agent': 'Radio22PL/0.2 (+https://github.com/assumcaonerd/22pl)', accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml' }, signal: AbortSignal.timeout(15000) });
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const items = parseFeed(await response.text(), source);
           for (const item of items) {
-            if (known.has(item.id)) continue;
+            const existing = byId.get(item.id);
+            if (existing) {
+              if (!existing.content) existing.content = item.content || await fetchArticleText(existing.sourceUrl || item.sourceUrl);
+              continue;
+            }
+            if (!item.content) item.content = await fetchArticleText(item.sourceUrl);
             current.push(item);
-            known.add(item.id);
+            byId.set(item.id, item);
             imported += 1;
           }
         } catch (error) {
@@ -118,4 +170,4 @@ function createCollector({ sourcesFile, newsFile, intervalMinutes = 3 }) {
   return { sync, status: () => ({ ...state }), intervalMinutes };
 }
 
-module.exports = { createCollector, parseFeed };
+module.exports = { createCollector, parseFeed, cleanText, extractArticleText, removeSources };

@@ -37,7 +37,7 @@ function safeNews(input) {
   if (required.some(key => !String(input[key] || '').trim())) throw new Error('Preencha título, resumo, editoria e fonte.');
   return {
     id: input.id || crypto.randomUUID(),
-    title: String(input.title).trim(), summary: String(input.summary).trim(), category: String(input.category).trim(), source: String(input.source).trim(),
+    title: String(input.title).trim(), summary: String(input.summary).trim(), content: String(input.content || '').trim(), category: String(input.category).trim(), source: String(input.source).trim(),
     sourceUrl: String(input.sourceUrl || '').trim(), image: String(input.image || '').trim(), publishedAt: input.publishedAt || new Date().toISOString(),
     status: ['approved', 'pending', 'blocked'].includes(input.status) ? input.status : 'pending', priority: Math.max(0, Math.min(100, Number(input.priority || 50))), breaking: Boolean(input.breaking)
   };
