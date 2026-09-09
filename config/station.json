@@ -1,0 +1,15 @@
+{
+  "name": "Rádio 22PL",
+  "tagline": "Informação em movimento",
+  "city": "Vitória, Espírito Santo",
+  "timezone": "America/Sao_Paulo",
+  "bulletinIntervalMinutes": 15,
+  "breakingPriority": 100,
+  "sources": [
+    { "name": "Notícia ES", "url": "https://noticiaes.com.br/rss.xml", "enabled": true }
+  ],
+  "presenters": [
+    { "id": "marcos", "name": "Marcos", "gender": "male", "rate": 0.98, "pitch": 0.88 },
+    { "id": "clara", "name": "Clara", "gender": "female", "rate": 1.02, "pitch": 1.08 }
+  ]
+}
