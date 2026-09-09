@@ -1,0 +1,41 @@
+[
+  {
+    "id": "estreia-22pl",
+    "title": "Rádio 22PL inicia sua transmissão experimental",
+    "summary": "A nova emissora virtual começa a testar uma programação contínua de notícias, boletins e plantões com locutores digitais.",
+    "category": "Rádio 22PL",
+    "source": "Redação 22PL",
+    "sourceUrl": "",
+    "image": "",
+    "publishedAt": "2026-09-09T11:00:00.000Z",
+    "status": "approved",
+    "priority": 80,
+    "breaking": false
+  },
+  {
+    "id": "boletins-capixabas",
+    "title": "Programação terá notícias do Espírito Santo e do Brasil",
+    "summary": "Política, segurança pública, trânsito, tempo, esportes e economia formarão a grade automática da emissora.",
+    "category": "Programação",
+    "source": "Redação 22PL",
+    "sourceUrl": "",
+    "image": "",
+    "publishedAt": "2026-09-09T10:45:00.000Z",
+    "status": "approved",
+    "priority": 70,
+    "breaking": false
+  },
+  {
+    "id": "plantao-automatico",
+    "title": "Plantão automático poderá interromper a programação",
+    "summary": "Notícias marcadas como urgentes assumem o primeiro lugar da fila e recebem identificação sonora própria.",
+    "category": "Plantão",
+    "source": "Redação 22PL",
+    "sourceUrl": "",
+    "image": "",
+    "publishedAt": "2026-09-09T10:30:00.000Z",
+    "status": "approved",
+    "priority": 60,
+    "breaking": false
+  }
+]
