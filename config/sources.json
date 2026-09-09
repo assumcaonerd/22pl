@@ -1,0 +1,34 @@
+[
+  {
+    "id": "brasil-ultimas",
+    "name": "Notícias do Brasil",
+    "url": "https://news.google.com/rss?hl=pt-BR&gl=BR&ceid=BR:pt-419",
+    "category": "Brasil",
+    "enabled": true,
+    "autoApprove": true
+  },
+  {
+    "id": "espirito-santo",
+    "name": "Notícias do Espírito Santo",
+    "url": "https://news.google.com/rss/search?q=Esp%C3%ADrito%20Santo%20when%3A1d&hl=pt-BR&gl=BR&ceid=BR%3Apt-419",
+    "category": "Espírito Santo",
+    "enabled": true,
+    "autoApprove": true
+  },
+  {
+    "id": "politica",
+    "name": "Política nacional",
+    "url": "https://news.google.com/rss/search?q=pol%C3%ADtica%20Brasil%20when%3A1d&hl=pt-BR&gl=BR&ceid=BR%3Apt-419",
+    "category": "Política",
+    "enabled": true,
+    "autoApprove": true
+  },
+  {
+    "id": "seguranca",
+    "name": "Segurança pública",
+    "url": "https://news.google.com/rss/search?q=seguran%C3%A7a%20p%C3%BAblica%20Brasil%20when%3A1d&hl=pt-BR&gl=BR&ceid=BR%3Apt-419",
+    "category": "Segurança Pública",
+    "enabled": true,
+    "autoApprove": true
+  }
+]
