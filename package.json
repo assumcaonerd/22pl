@@ -1,0 +1,11 @@
+{
+  "name": "22pl",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rádio virtual automatizada 22PL",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check public/app.js && node --check public/admin.js"
+  },
+  "engines": { "node": ">=20" }
+}
