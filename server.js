@@ -10,12 +10,12 @@ const PUBLIC = path.join(ROOT, 'public');
 const NEWS_FILE = path.join(ROOT, 'data', 'news.json');
 const STATION_FILE = path.join(ROOT, 'config', 'station.json');
 const SOURCES_FILE = path.join(ROOT, 'config', 'sources.json');
-const station = readJson(STATION_FILE);
-const collector = createCollector({ sourcesFile: SOURCES_FILE, newsFile: NEWS_FILE, intervalMinutes: station.newsRefreshMinutes || 3 });
 
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg' };
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const sendJson = (res, status, value) => { res.writeHead(status, { 'content-type': types['.json'], 'cache-control': 'no-store' }); res.end(JSON.stringify(value)); };
+const station = readJson(STATION_FILE);
+const collector = createCollector({ sourcesFile: SOURCES_FILE, newsFile: NEWS_FILE, intervalMinutes: station.newsRefreshMinutes || 3 });
 
 function sortedNews() {
   return readJson(NEWS_FILE)
